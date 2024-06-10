@@ -1,5 +1,5 @@
 {
-    "name": "unique main menu time - Copy - Copy - Copy - Copy - Copy",
+    "name": "unique main menu time - Copy - Copy - Copy - Copy - Copy - Copy",
     "description": "",
     "dependencies": {
         "device": "*",
@@ -13,7 +13,8 @@
         "corgio": "*",
         "arcade-story": "github:microsoft/arcade-storytelling#v1.0.3",
         "Makey Makey Keymappings": "github:joylabz/makeymakey-makecode-arcade-extension#1.0.3",
-        "arcade-sprite-data": "github:microsoft/arcade-sprite-data#v0.2.1"
+        "arcade-sprite-data": "github:microsoft/arcade-sprite-data#v0.2.1",
+        "arcade-split-screen": "github:riknoll/arcade-split-screen#v0.0.3"
     },
     "files": [
         "main.blocks",
