@@ -665,8 +665,11 @@ function selected () {
     slectedmusictimer = 0
     music.play(music.melodyPlayable(music.beamUp), music.PlaybackMode.InBackground)
 }
-function DamageKnockback (Player: string) {
-	
+function DamageKnockback (Player: string, VX: number, VY: number, Damage: number) {
+    if (Player == "Player1") {
+        playr1.vx += VX
+        playr1.vy += VY
+    }
 }
 function P2jeffJab () {
     if (P2jabCoolDown == 0) {
@@ -1107,6 +1110,8 @@ function INITIATE_COMBAT (Player1Char: string, Player2Char: string) {
         controller.player2.moveSprite(playr2, 100, 0)
     }
     CombatActive = 1
+    P1Health = 100
+    P2Health = 100
 }
 function P2archieJab () {
     if (P2jabCoolDown == 0) {
@@ -1148,6 +1153,8 @@ let P2_indicator_counter = 0
 let P1_indicator: Sprite = null
 let P1_indicator_counter = 0
 let loadingz = 0
+let P2Health = 0
+let P1Health = 0
 let centreOnP2 = 0
 let cooounterP2 = 0
 let centreOnP1 = 0
@@ -1452,7 +1459,7 @@ countdown2.bg = 0
                 P1_indicator.setScale(0.5, ScaleAnchor.Middle)
             }
             if (P1_indicator_counter == 1) {
-                P1_indicator.setPosition(playr2.x, playr2.y - 24)
+                P1_indicator.setPosition(playr1.x, playr1.y - 24)
             }
             if (characterAnimations.matchesRule(playr1, characterAnimations.rule(Predicate.NotMoving))) {
                 if (P1Flip == 1) {
@@ -1500,7 +1507,7 @@ countdown2.bg = 0
                 P1_indicator.setScale(0.5, ScaleAnchor.Middle)
             }
             if (P1_indicator_counter == 1) {
-                P1_indicator.setPosition(playr2.x, playr2.y - 24)
+                P1_indicator.setPosition(playr1.x, playr1.y - 24)
             }
             if (characterAnimations.matchesRule(playr1, characterAnimations.rule(Predicate.NotMoving))) {
                 if (P1Flip == 1) {
@@ -1548,7 +1555,7 @@ countdown2.bg = 0
                 P1_indicator.setScale(0.5, ScaleAnchor.Middle)
             }
             if (P1_indicator_counter == 1) {
-                P1_indicator.setPosition(playr2.x, playr2.y - 24)
+                P1_indicator.setPosition(playr1.x, playr1.y - 24)
             }
             if (P1_Greeg_Stunned == 1 && P1_StunnedFunctionCounter == 0) {
                 Stunnedfunction("Player1")
