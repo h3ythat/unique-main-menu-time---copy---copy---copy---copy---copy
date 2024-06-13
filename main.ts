@@ -5,11 +5,66 @@ namespace SpriteKind {
     export const READYNESS = SpriteKind.create()
     export const Random_P_Indicator = SpriteKind.create()
     export const character = SpriteKind.create()
+    export const Bullet = SpriteKind.create()
+}
+function P1jeffSpec () {
+    if (P1SpecCoolDown == 0) {
+        characterAnimations.setCharacterAnimationsEnabled(playr1, false)
+        characterAnimations.setCharacterAnimationsEnabled(playr1, true)
+        characterAnimations.setCharacterState(playr1, characterAnimations.rule(Predicate.HittingWallUp))
+        if (P1Flip == 0) {
+            animation.runImageAnimation(
+            playr1,
+            assets.animation`myAnim18`,
+            140,
+            false
+            )
+        }
+        if (P1Flip == 1) {
+            animation.runImageAnimation(
+            playr1,
+            assets.animation`myAnim19`,
+            100,
+            false
+            )
+        }
+        P1SpecCoolDown = 1
+        controller.moveSprite(playr1, 0, 0)
+        timer.after(2500, function () {
+            P1SpecCoolDown = 0
+        })
+        timer.after(1400, function () {
+            characterAnimations.clearCharacterState(playr1)
+            controller.moveSprite(playr1, 100, 0)
+        })
+    }
 }
 controller.player2.onButtonEvent(ControllerButton.A, ControllerButtonEvent.Repeated, function () {
     P2SpeedUpBar = 1
 })
-function redrawcursor () {
+controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (player1 == "jeff") {
+        if (playr1.isHittingTile(CollisionDirection.Bottom)) {
+            playr1.vy += -70
+        }
+    }
+    if (player1 == "greeg") {
+        if (playr1.isHittingTile(CollisionDirection.Bottom)) {
+            playr1.vy += -90
+        }
+    }
+    if (player1 == "archie") {
+        if (playr1.isHittingTile(CollisionDirection.Bottom)) {
+            playr1.vy += -60
+        }
+    }
+})
+function GreegStunned (Player: string) {
+    if (true) {
+    	
+    }
+}
+function redrawcursor (cursor1_char: string, cursor2_char: string) {
     cursour1x = Cursor1.x
     cursor1y = Cursor1.y
     cursor2x = Cursor2.x
@@ -18,6 +73,10 @@ function redrawcursor () {
     sprites.destroy(Cursor2)
     Cursor1 = sprites.create(assets.image`myImage7`, SpriteKind.Cursor)
     Cursor2 = sprites.create(assets.image`myImage1`, SpriteKind.Cursor)
+    if (cursor1_char != null && cursor2_char != null) {
+        sprites.setDataString(Cursor1, "characterchosen", cursor1_char)
+        sprites.setDataString(Cursor2, "characterchosen", cursor2_char)
+    }
     Cursor1.x = cursour1x
     Cursor1.y = cursour1x
     Cursor2.x = cursor2x
@@ -27,6 +86,9 @@ function redrawcursor () {
     controller.moveSprite(Cursor1)
     controller.player2.moveSprite(Cursor2)
 }
+controller.player2.onButtonEvent(ControllerButton.B, ControllerButtonEvent.Pressed, function () {
+	
+})
 function Play () {
     mySprite.setImage(assets.image`myImage5`)
     music.play(music.melodyPlayable(music.knock), music.PlaybackMode.UntilDone)
@@ -39,6 +101,66 @@ function Play () {
     sprites.destroy(mySprite)
     CHOOSEURCHARACTER()
     playyed = 1
+}
+controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (CombatActive == 1) {
+        if (player1 == "jeff") {
+            P1jeffSpec()
+        }
+        if (player1 == "archie") {
+            P1archieSpec()
+        }
+        if (player1 == "greeg") {
+            P1greegSpec()
+        }
+    }
+})
+controller.up.onEvent(ControllerButtonEvent.Repeated, function () {
+    if (player1 == "jeff") {
+        if (playr1.isHittingTile(CollisionDirection.Bottom)) {
+            playr1.vy += -70
+        }
+    }
+    if (player1 == "greeg") {
+        if (playr1.isHittingTile(CollisionDirection.Bottom)) {
+            playr1.vy += -90
+        }
+    }
+    if (player1 == "archie") {
+        if (playr1.isHittingTile(CollisionDirection.Bottom)) {
+            playr1.vy += -60
+        }
+    }
+})
+function P1archieJab () {
+    if (P1jabCoolDown == 0) {
+        characterAnimations.setCharacterAnimationsEnabled(playr1, false)
+        characterAnimations.setCharacterAnimationsEnabled(playr1, true)
+        characterAnimations.setCharacterState(playr1, characterAnimations.rule(Predicate.HittingWallUp))
+        if (P1Flip == 0) {
+            animation.runImageAnimation(
+            playr1,
+            assets.animation`myAnim14`,
+            75,
+            false
+            )
+        }
+        if (P1Flip == 1) {
+            animation.runImageAnimation(
+            playr1,
+            assets.animation`myAnim13`,
+            70,
+            false
+            )
+        }
+        P1jabCoolDown = 1
+        timer.after(500, function () {
+            P1jabCoolDown = 0
+        })
+        timer.after(455, function () {
+            characterAnimations.clearCharacterState(playr1)
+        })
+    }
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (Cursor1.overlapsWith(mySprite)) {
@@ -59,11 +181,19 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (Cursor1.overlapsWith(R_READY) && sprites.readDataString(Cursor1, "characterchosen") != null) {
         RedIsREADY = 1
     }
+    if (CombatActive == 1) {
+        if (player1 == "jeff") {
+            P1jeffJab()
+        }
+        if (player1 == "archie") {
+            P1archieJab()
+        }
+        if (player1 == "greeg") {
+            P1greegJab()
+        }
+    }
 })
 controller.player2.onButtonEvent(ControllerButton.A, ControllerButtonEvent.Pressed, function () {
-    if (Cursor2.overlapsWith(mySprite)) {
-        Play()
-    }
     if (Cursor2.overlapsWith(jeffcharacter)) {
         sprites.setDataString(Cursor2, "characterchosen", "jeff")
         slectedmusictimer = 1
@@ -78,6 +208,17 @@ controller.player2.onButtonEvent(ControllerButton.A, ControllerButtonEvent.Press
     }
     if (Cursor2.overlapsWith(B_READY) && sprites.readDataString(Cursor2, "characterchosen") != null) {
         BlueIsREADY = 1
+    }
+    if (CombatActive == 1) {
+        if (player2 == "jeff") {
+            P2jeffJab()
+        }
+        if (player2 == "archie") {
+            P2archieJab()
+        }
+        if (player2 == "greeg") {
+            P2greegJab()
+        }
     }
 })
 controller.player2.onButtonEvent(ControllerButton.A, ControllerButtonEvent.Released, function () {
@@ -124,8 +265,18 @@ countdownthingy = textsprite.create("Time left:", 0, 15)
     text3.x = archiecharacter.x - 0
     textsprite3.x = greegcharacter.x - 0
     textsprite3.y = greegcharacter.y + 22
-    redrawcursor()
+    redrawcursor(null, null)
 }
+controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (CombatActive == 1) {
+        P1Flip = 0
+    }
+})
+controller.player2.onButtonEvent(ControllerButton.Left, ControllerButtonEvent.Released, function () {
+    if (CombatActive == 1) {
+        P2Flip = 0
+    }
+})
 function purpleurple (backtoorignal: string) {
     if (backtoorignal == "archie") {
         archiecharacter.setImage(assets.image`myImage13`)
@@ -134,16 +285,303 @@ function purpleurple (backtoorignal: string) {
         archiecharacter.setImage(assets.image`myImage8`)
     }
 }
+controller.right.onEvent(ControllerButtonEvent.Released, function () {
+    if (CombatActive == 1) {
+        P1Flip = 1
+    }
+})
+controller.left.onEvent(ControllerButtonEvent.Released, function () {
+    if (CombatActive == 1) {
+        P1Flip = 0
+    }
+})
 function ReadierSOund (readyteam: Sprite) {
     sprites.setDataBoolean(readyteam, "musiced", true)
     music.play(music.melodyPlayable(music.knock), music.PlaybackMode.InBackground)
 }
+function P1greegSpec () {
+    if (P1SpecCoolDown == 0) {
+        characterAnimations.setCharacterAnimationsEnabled(playr1, false)
+        characterAnimations.setCharacterAnimationsEnabled(playr1, true)
+        characterAnimations.setCharacterState(playr1, characterAnimations.rule(Predicate.HittingWallUp))
+        if (P1Flip == 0) {
+            characterAnimations.loopFrames(
+            playr1,
+            assets.animation`myAnim23`,
+            50,
+            characterAnimations.rule(Predicate.HittingWallUp)
+            )
+            playr1.setVelocity(-150, 0)
+        }
+        if (P1Flip == 1) {
+            characterAnimations.loopFrames(
+            playr1,
+            assets.animation`myAnim22`,
+            50,
+            characterAnimations.rule(Predicate.HittingWallUp)
+            )
+            playr1.setVelocity(150, 0)
+        }
+        P1_greeg_rolling = 1
+        P1SpecCoolDown = 1
+        timer.after(1000, function () {
+            if (P1_greeg_rolling == 1) {
+                playr1.setVelocity(0, 0)
+                characterAnimations.clearCharacterState(playr1)
+                characterAnimations.setCharacterState(playr1, characterAnimations.rule(Predicate.HittingWallLeft, Predicate.HittingWallRight))
+                P1_greeg_rolling = 0
+                controller.moveSprite(playr1, 0, 0)
+                P1_Greeg_Stunned = 1
+                timer.after(2500, function () {
+                    characterAnimations.clearCharacterState(playr1)
+                    controller.moveSprite(playr1, 100, 0)
+                    P1_Greeg_Stunned = 0
+                })
+            }
+        })
+    }
+}
+controller.player2.onButtonEvent(ControllerButton.Up, ControllerButtonEvent.Pressed, function () {
+    if (player2 == "jeff") {
+        if (playr2.isHittingTile(CollisionDirection.Bottom)) {
+            playr2.vy += -70
+        }
+    }
+    if (player2 == "greeg") {
+        if (playr2.isHittingTile(CollisionDirection.Bottom)) {
+            playr2.vy += -90
+        }
+    }
+    if (player2 == "archie") {
+        if (playr2.isHittingTile(CollisionDirection.Bottom)) {
+            playr2.vy += -60
+        }
+    }
+})
+controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (CombatActive == 1) {
+        P1Flip = 1
+    }
+})
+function P1jeffJab () {
+    if (P1jabCoolDown == 0) {
+        characterAnimations.setCharacterAnimationsEnabled(playr1, false)
+        characterAnimations.setCharacterAnimationsEnabled(playr1, true)
+        characterAnimations.setCharacterState(playr1, characterAnimations.rule(Predicate.HittingWallUp))
+        if (P1Flip == 0) {
+            animation.runImageAnimation(
+            playr1,
+            assets.animation`myAnim11`,
+            75,
+            false
+            )
+        }
+        if (P1Flip == 1) {
+            animation.runImageAnimation(
+            playr1,
+            assets.animation`myAnim12`,
+            75,
+            false
+            )
+        }
+        P1jabCoolDown = 1
+        timer.after(500, function () {
+            P1jabCoolDown = 0
+        })
+        timer.after(455, function () {
+            characterAnimations.clearCharacterState(playr2)
+        })
+    }
+}
+// function P1jeffSpec() {
+// if ( == 0) {
+// characterAnimations.setCharacterAnimationsEnabled(playr1, false)
+// characterAnimations.setCharacterAnimationsEnabled(playr1, true)
+// characterAnimations.setCharacterState(playr1, characterAnimations.rule(Predicate.HittingWallUp))
+// if (P1Flip == 0) {
+// animation.runImageAnimation(
+// playr1,
+// assets.animation`myAnim11`,
+// 75,
+// false
+// )
+// }
+// if (P1Flip == 1) {
+// animation.runImageAnimation(
+// playr1,
+// assets.animation`myAnim12`,
+// 75,
+// false
+// )
+// }
+// P1jabCoolDown = 1
+// timer.after(500, function () {
+// P1jabCoolDown = 0
+// })
+// timer.after(455, function () {
+// characterAnimations.setCharacterState(playr1, characterAnimations.rule(Predicate.NotMoving))
+// })
+// }
+// }
+controller.player2.onButtonEvent(ControllerButton.Right, ControllerButtonEvent.Pressed, function () {
+    if (CombatActive == 1) {
+        P2Flip = 1
+    }
+})
 controller.A.onEvent(ControllerButtonEvent.Released, function () {
     P1SpeedUpBar = 0
 })
+controller.player2.onButtonEvent(ControllerButton.Up, ControllerButtonEvent.Repeated, function () {
+    if (player2 == "jeff") {
+        if (playr2.isHittingTile(CollisionDirection.Bottom)) {
+            playr2.vy += -70
+        }
+    }
+    if (player2 == "greeg") {
+        if (playr2.isHittingTile(CollisionDirection.Bottom)) {
+            playr2.vy += -90
+        }
+    }
+    if (player2 == "archie") {
+        if (playr2.isHittingTile(CollisionDirection.Bottom)) {
+            playr2.vy += -60
+        }
+    }
+})
+function P1greegJab () {
+    if (P1jabCoolDown == 0) {
+        characterAnimations.setCharacterAnimationsEnabled(playr1, false)
+        characterAnimations.setCharacterAnimationsEnabled(playr1, true)
+        characterAnimations.setCharacterState(playr1, characterAnimations.rule(Predicate.HittingWallUp))
+        if (P1Flip == 0) {
+            animation.runImageAnimation(
+            playr1,
+            assets.animation`myAnim17`,
+            120,
+            false
+            )
+        }
+        if (P1Flip == 1) {
+            animation.runImageAnimation(
+            playr1,
+            assets.animation`myAnim16`,
+            120,
+            false
+            )
+        }
+        P1jabCoolDown = 1
+        timer.after(500, function () {
+            P1jabCoolDown = 0
+        })
+        timer.after(455, function () {
+            characterAnimations.clearCharacterState(playr1)
+        })
+    }
+}
 function selected () {
     slectedmusictimer = 0
     music.play(music.melodyPlayable(music.beamUp), music.PlaybackMode.InBackground)
+}
+function P2jeffJab () {
+    if (P2jabCoolDown == 0) {
+        characterAnimations.setCharacterAnimationsEnabled(playr2, false)
+        characterAnimations.setCharacterAnimationsEnabled(playr2, true)
+        characterAnimations.setCharacterState(playr2, characterAnimations.rule(Predicate.HittingWallUp))
+        if (P2Flip == 0) {
+            animation.runImageAnimation(
+            playr2,
+            assets.animation`myAnim11`,
+            75,
+            false
+            )
+        }
+        if (P2Flip == 1) {
+            animation.runImageAnimation(
+            playr2,
+            assets.animation`myAnim12`,
+            75,
+            false
+            )
+        }
+        P2jabCoolDown = 1
+        timer.after(500, function () {
+            P2jabCoolDown = 0
+        })
+        timer.after(455, function () {
+            characterAnimations.clearCharacterState(playr2)
+        })
+    }
+}
+function P2greegJab () {
+    if (P2jabCoolDown == 0) {
+        characterAnimations.setCharacterAnimationsEnabled(playr2, false)
+        characterAnimations.setCharacterAnimationsEnabled(playr2, true)
+        characterAnimations.setCharacterState(playr2, characterAnimations.rule(Predicate.HittingWallUp))
+        if (P2Flip == 0) {
+            animation.runImageAnimation(
+            playr2,
+            assets.animation`myAnim17`,
+            75,
+            false
+            )
+        }
+        if (P2Flip == 1) {
+            animation.runImageAnimation(
+            playr2,
+            assets.animation`myAnim16`,
+            75,
+            false
+            )
+        }
+        P2jabCoolDown = 1
+        timer.after(500, function () {
+            P2jabCoolDown = 0
+        })
+        timer.after(455, function () {
+            characterAnimations.clearCharacterState(playr2)
+        })
+    }
+}
+function P1archieSpec () {
+    if (P1SpecCoolDown == 0) {
+        characterAnimations.setCharacterAnimationsEnabled(playr1, false)
+        characterAnimations.setCharacterAnimationsEnabled(playr1, true)
+        characterAnimations.setCharacterState(playr1, characterAnimations.rule(Predicate.HittingWallUp))
+        if (P1Flip == 0) {
+            animation.runImageAnimation(
+            playr1,
+            assets.animation`myAnim21`,
+            200,
+            false
+            )
+        }
+        if (P1Flip == 1) {
+            animation.runImageAnimation(
+            playr1,
+            assets.animation`myAnim20`,
+            200,
+            false
+            )
+        }
+        P1SpecCoolDown = 1
+        controller.moveSprite(playr1, 0, 0)
+        timer.after(3000, function () {
+            P1SpecCoolDown = 0
+        })
+        timer.after(800, function () {
+            characterAnimations.clearCharacterState(playr1)
+            controller.moveSprite(playr1, 100, 0)
+            Archie_bullet_P1 = sprites.create(assets.image`myImage69`, SpriteKind.Bullet)
+            Archie_bullet_P1.setPosition(playr1.x + 9.5, playr1.y - 1)
+            Archie_bullet_P1.setVelocity(200, 0)
+            if (P1Flip == 0) {
+                Archie_bullet_P1.setVelocity(-200, 0)
+            }
+            if (P1Flip == 1) {
+                Archie_bullet_P1.setVelocity(200, 0)
+            }
+        })
+    }
 }
 function ZEROIMPACT (Cursor1_Char: string, Cursor2_Char: string) {
     RedIsREADY = 0
@@ -160,8 +598,9 @@ function ZEROIMPACT (Cursor1_Char: string, Cursor2_Char: string) {
         sprites.destroy(textSprite2)
         sprites.destroy(textSprite)
         sprites.destroy(countdownthingy)
+        sprites.destroy(textsprite3)
         scene.setBackgroundImage(assets.image`myImage26`)
-        redrawcursor()
+        redrawcursor(null, null)
         sprites.setDataString(Cursor1, "characterchosen", Cursor1_Char)
         sprites.setDataString(Cursor2, "characterchosen", Cursor2_Char)
         P1_VERSION_VERSUS_SCREEN = sprites.create(assets.image`myImage27`, SpriteKind.Random_P_Indicator)
@@ -199,9 +638,9 @@ function ZEROIMPACT (Cursor1_Char: string, Cursor2_Char: string) {
             }
         }
         if (sprites.readDataString(Cursor1, "characterchosen") == "jeff") {
-            jeff2 = sprites.create(assets.image`myImage29`, SpriteKind.character)
-            jeff2.setPosition(40, 90)
-            jeff2.setScale(2, ScaleAnchor.Middle)
+            jeff1 = sprites.create(assets.image`myImage29`, SpriteKind.character)
+            jeff1.setPosition(40, 90)
+            jeff1.setScale(2, ScaleAnchor.Middle)
         }
         if (sprites.readDataString(Cursor2, "characterchosen") == "jeff") {
             jeff2 = sprites.create(jeff_img_flip, SpriteKind.character)
@@ -209,9 +648,9 @@ function ZEROIMPACT (Cursor1_Char: string, Cursor2_Char: string) {
             jeff2.setScale(2, ScaleAnchor.Middle)
         }
         if (sprites.readDataString(Cursor1, "characterchosen") == "archie") {
-            archie2 = sprites.create(assets.image`myImage30`, SpriteKind.character)
-            archie2.setPosition(40, 90)
-            archie2.setScale(2, ScaleAnchor.Middle)
+            archie1 = sprites.create(assets.image`myImage30`, SpriteKind.character)
+            archie1.setPosition(40, 90)
+            archie1.setScale(2, ScaleAnchor.Middle)
         }
         if (sprites.readDataString(Cursor2, "characterchosen") == "archie") {
             archie2 = sprites.create(archie_img_flip, SpriteKind.character)
@@ -219,42 +658,328 @@ function ZEROIMPACT (Cursor1_Char: string, Cursor2_Char: string) {
             archie2.setScale(2, ScaleAnchor.Middle)
         }
         if (sprites.readDataString(Cursor1, "characterchosen") == "greeg") {
-            greeg2 = sprites.create(assets.image`myImage31`, SpriteKind.character)
-            greeg2.setPosition(40, 90)
-            greeg2.setScale(2, ScaleAnchor.Middle)
+            greeg1 = sprites.create(assets.image`myImage31`, SpriteKind.character)
+            greeg1.setPosition(40, 90)
+            greeg1.setScale(2, ScaleAnchor.Middle)
         }
         if (sprites.readDataString(Cursor2, "characterchosen") == "greeg") {
             greeg2 = sprites.create(greeg_img_flip, SpriteKind.character)
             greeg2.setPosition(120, 90)
             greeg2.setScale(2, ScaleAnchor.Middle)
         }
-        redrawcursor()
+        redrawcursor(sprites.readDataString(Cursor1, "characterchosen"), sprites.readDataString(Cursor2, "characterchosen"))
         game.splash("Both players, hold \"A\" to speed up loading.")
     })
     timer.after(1000, function () {
         loadingbaractive = 1
     })
 }
+controller.player2.onButtonEvent(ControllerButton.Left, ControllerButtonEvent.Pressed, function () {
+    if (CombatActive == 1) {
+        P2Flip = 0
+    }
+})
 controller.A.onEvent(ControllerButtonEvent.Repeated, function () {
     P1SpeedUpBar = 1
 })
+function INITIATE_COMBAT (Player1Char: string, Player2Char: string) {
+    loadingbaractive = 0
+    scene.setBackgroundImage(img`
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        `)
+    if (sprites.readDataString(Cursor1, "characterchosen") == "jeff") {
+        sprites.destroy(jeff1)
+    }
+    if (sprites.readDataString(Cursor1, "characterchosen") == "archie") {
+        sprites.destroy(archie1)
+    }
+    if (sprites.readDataString(Cursor1, "characterchosen") == "greeg") {
+        sprites.destroy(greeg1)
+    }
+    if (sprites.readDataString(Cursor2, "characterchosen") == "jeff") {
+        sprites.destroy(jeff2)
+    }
+    if (sprites.readDataString(Cursor2, "characterchosen") == "archie") {
+        sprites.destroy(archie2)
+    }
+    if (sprites.readDataString(Cursor2, "characterchosen") == "greeg") {
+        sprites.destroy(greeg2)
+    }
+    sprites.destroy(P1_VERSION_VERSUS_SCREEN)
+    sprites.destroy(P2_VERSION_VERSUS_SCREEN)
+    sprites.destroy(Cursor1)
+    sprites.destroy(Cursor2)
+    tiles.setCurrentTilemap(tilemap`level0`)
+    for (let p1walls of tiles.getTilesByType(assets.tile`myTile1`)) {
+        tiles.setWallAt(p1walls, true)
+    }
+    for (let p2floor of tiles.getTilesByType(assets.tile`myTile2`)) {
+        tiles.setWallAt(p2floor, true)
+    }
+    for (let floor of tiles.getTilesByType(sprites.dungeon.darkGroundCenter)) {
+        tiles.setWallAt(floor, true)
+    }
+    splitScreen.setCameraRegion(splitScreen.Camera.Camera1, splitScreen.CameraRegion.VerticalLeftHalf)
+    splitScreen.setCameraRegion(splitScreen.Camera.Camera2, splitScreen.CameraRegion.VerticalRightHalf)
+    if (Player1Char == "jeff") {
+        if (cooounterP1 == 0) {
+            playr1 = sprites.create(assets.image`jeff`, SpriteKind.Player)
+            cooounterP1 += 1
+        }
+        player1 = "jeff"
+        tiles.placeOnRandomTile(playr1, assets.tile`myTile3`)
+        centreOnP1 = 1
+        playr1.vy += 200
+        playr1.ay = 200
+        controller.moveSprite(playr1, 100, 0)
+    }
+    if (Player1Char == "archie") {
+        if (cooounterP1 == 0) {
+            playr1 = sprites.create(assets.image`myImage65`, SpriteKind.Player)
+            cooounterP1 += 1
+        }
+        player1 = "archie"
+        tiles.placeOnRandomTile(playr1, assets.tile`myTile3`)
+        centreOnP1 = 1
+        playr1.vy += 200
+        playr1.ay = 200
+        controller.moveSprite(playr1, 100, 0)
+    }
+    if (Player1Char == "greeg") {
+        if (cooounterP1 == 0) {
+            playr1 = sprites.create(assets.image`myImage66`, SpriteKind.Player)
+            cooounterP1 += 1
+        }
+        player1 = "greeg"
+        tiles.placeOnRandomTile(playr1, assets.tile`myTile3`)
+        centreOnP1 = 1
+        playr1.vy += 200
+        playr1.ay = 200
+        controller.moveSprite(playr1, 100, 0)
+    }
+    if (Player2Char == "jeff") {
+        if (cooounterP2 == 0) {
+            playr2 = sprites.create(assets.image`jeff`, SpriteKind.Player)
+            cooounterP2 += 1
+        }
+        player2 = "jeff"
+        tiles.placeOnRandomTile(playr2, assets.tile`myTile4`)
+        centreOnP2 = 1
+        playr2.vy += 200
+        playr2.ay = 200
+        controller.player2.moveSprite(playr2, 100, 0)
+    }
+    if (Player2Char == "archie") {
+        if (cooounterP2 == 0) {
+            playr2 = sprites.create(assets.image`myImage65`, SpriteKind.Player)
+            cooounterP2 += 1
+        }
+        player2 = "archie"
+        tiles.placeOnRandomTile(playr2, assets.tile`myTile4`)
+        centreOnP2 = 1
+        playr2.vy += 200
+        playr2.ay = 200
+        controller.player2.moveSprite(playr2, 100, 0)
+    }
+    if (Player2Char == "greeg") {
+        if (cooounterP2 == 0) {
+            playr2 = sprites.create(assets.image`myImage66`, SpriteKind.Player)
+            cooounterP2 += 1
+        }
+        player2 = "greeg"
+        tiles.placeOnRandomTile(playr2, assets.tile`myTile4`)
+        centreOnP2 = 1
+        playr2.vy += 200
+        playr2.ay = 200
+        controller.player2.moveSprite(playr2, 100, 0)
+    }
+    CombatActive = 1
+}
+function P2archieJab () {
+    if (P2jabCoolDown == 0) {
+        characterAnimations.setCharacterAnimationsEnabled(playr2, false)
+        characterAnimations.setCharacterAnimationsEnabled(playr2, true)
+        characterAnimations.setCharacterState(playr2, characterAnimations.rule(Predicate.HittingWallUp))
+        if (P2Flip == 0) {
+            animation.runImageAnimation(
+            playr2,
+            assets.animation`myAnim14`,
+            75,
+            false
+            )
+        }
+        if (P2Flip == 1) {
+            animation.runImageAnimation(
+            playr2,
+            assets.animation`myAnim13`,
+            75,
+            false
+            )
+        }
+        P2jabCoolDown = 1
+        timer.after(500, function () {
+            P2jabCoolDown = 0
+        })
+        timer.after(455, function () {
+            characterAnimations.clearCharacterState(playr2)
+        })
+    }
+}
+controller.player2.onButtonEvent(ControllerButton.Right, ControllerButtonEvent.Released, function () {
+    if (CombatActive == 1) {
+        P2Flip = 1
+    }
+})
 let loadingz = 0
+let centreOnP2 = 0
+let cooounterP2 = 0
+let centreOnP1 = 0
+let cooounterP1 = 0
 let loadingbaractive = 0
 let greeg2: Sprite = null
+let greeg1: Sprite = null
 let archie2: Sprite = null
+let archie1: Sprite = null
 let jeff2: Sprite = null
+let jeff1: Sprite = null
 let greeg_img_flip: Image = null
 let archie_img_flip: Image = null
 let jeff_img_flip: Image = null
 let P2_VERSION_VERSUS_SCREEN: Sprite = null
 let P1_VERSION_VERSUS_SCREEN: Sprite = null
+let Archie_bullet_P1: Sprite = null
+let P2jabCoolDown = 0
 let P1SpeedUpBar = 0
+let playr2: Sprite = null
+let P1_Greeg_Stunned = 0
+let P1_greeg_rolling = 0
+let P2Flip = 0
 let textsprite3: TextSprite = null
 let text3: TextSprite = null
 let textSprite2: TextSprite = null
 let textSprite: TextSprite = null
 let countdowner = 0
 let countdownthingy: TextSprite = null
+let player2 = ""
 let BlueIsREADY = 0
 let B_READY: Sprite = null
 let RedIsREADY = 0
@@ -263,13 +988,19 @@ let archiecharacter: Sprite = null
 let greegcharacter: Sprite = null
 let slectedmusictimer = 0
 let jeffcharacter: Sprite = null
+let P1jabCoolDown = 0
+let CombatActive = 0
 let playyed = 0
 let archiecharacterselectioncooldown = 0
 let cursor2y = 0
 let cursor2x = 0
 let cursor1y = 0
 let cursour1x = 0
+let player1 = ""
 let P2SpeedUpBar = 0
+let P1Flip = 0
+let playr1: Sprite = null
+let P1SpecCoolDown = 0
 let Cursor1: Sprite = null
 let Cursor2: Sprite = null
 let mySprite: Sprite = null
@@ -289,6 +1020,8 @@ Cursor1 = sprites.create(assets.image`myImage7`, SpriteKind.Cursor)
 controller.moveSprite(Cursor1)
 Cursor1.setStayInScreen(true)
 Cursor2.setStayInScreen(true)
+sprites.setDataString(Cursor1, "characterchosen", null)
+sprites.setDataString(Cursor2, "characterchosen", null)
 game.onUpdate(function () {
     if (playyed == 1) {
         if (sprites.readDataString(Cursor1, "characterchosen") == "jeff" && sprites.readDataString(Cursor2, "characterchosen") != "jeff") {
@@ -497,6 +1230,257 @@ countdown2.bg = 0
     }
     if (loadingz == 96) {
         scene.setBackgroundImage(assets.image`myImage64`)
+        timer.after(1000, function () {
+            INITIATE_COMBAT(sprites.readDataString(Cursor1, "characterchosen"), sprites.readDataString(Cursor2, "characterchosen"))
+        })
+    }
+    if (centreOnP1 == 1) {
+        splitScreen.centerCameraAt(splitScreen.Camera.Camera1, playr1.x, playr1.y)
+    }
+    if (centreOnP2 == 1) {
+        splitScreen.centerCameraAt(splitScreen.Camera.Camera2, playr2.x, playr2.y)
+    }
+    if (CombatActive == 1) {
+        if (player1 == "jeff") {
+            if (characterAnimations.matchesRule(playr1, characterAnimations.rule(Predicate.NotMoving))) {
+                if (P1Flip == 1) {
+                    characterAnimations.setCharacterAnimationsEnabled(playr1, false)
+                    characterAnimations.setCharacterAnimationsEnabled(playr1, true)
+                    characterAnimations.loopFrames(
+                    playr1,
+                    assets.animation`myAnim`,
+                    100,
+                    characterAnimations.rule(Predicate.NotMoving)
+                    )
+                }
+                if (P1Flip == 0) {
+                    characterAnimations.setCharacterAnimationsEnabled(playr1, false)
+                    characterAnimations.setCharacterAnimationsEnabled(playr1, true)
+                    characterAnimations.loopFrames(
+                    playr1,
+                    assets.animation`myAnim3`,
+                    100,
+                    characterAnimations.rule(Predicate.NotMoving)
+                    )
+                }
+            }
+            if (characterAnimations.matchesRule(playr1, characterAnimations.rule(Predicate.MovingRight))) {
+                characterAnimations.loopFrames(
+                playr1,
+                assets.animation`myAnim0`,
+                50,
+                characterAnimations.rule(Predicate.MovingRight)
+                )
+            }
+            if (characterAnimations.matchesRule(playr1, characterAnimations.rule(Predicate.MovingLeft))) {
+                characterAnimations.loopFrames(
+                playr1,
+                assets.animation`myAnim4`,
+                50,
+                characterAnimations.rule(Predicate.MovingLeft)
+                )
+            }
+        }
+        if (player1 == "archie") {
+            if (characterAnimations.matchesRule(playr1, characterAnimations.rule(Predicate.NotMoving))) {
+                if (P1Flip == 1) {
+                    characterAnimations.setCharacterAnimationsEnabled(playr1, false)
+                    characterAnimations.setCharacterAnimationsEnabled(playr1, true)
+                    characterAnimations.loopFrames(
+                    playr1,
+                    assets.animation`myAnim1`,
+                    100,
+                    characterAnimations.rule(Predicate.NotMoving)
+                    )
+                }
+                if (P1Flip == 0) {
+                    characterAnimations.setCharacterAnimationsEnabled(playr1, false)
+                    characterAnimations.setCharacterAnimationsEnabled(playr1, true)
+                    characterAnimations.loopFrames(
+                    playr1,
+                    assets.animation`myAnim5`,
+                    100,
+                    characterAnimations.rule(Predicate.NotMoving)
+                    )
+                }
+            }
+            if (characterAnimations.matchesRule(playr1, characterAnimations.rule(Predicate.MovingRight))) {
+                characterAnimations.loopFrames(
+                playr1,
+                assets.animation`myAnim2`,
+                50,
+                characterAnimations.rule(Predicate.MovingRight)
+                )
+            }
+            if (characterAnimations.matchesRule(playr1, characterAnimations.rule(Predicate.MovingLeft))) {
+                characterAnimations.loopFrames(
+                playr1,
+                assets.animation`myAnim6`,
+                50,
+                characterAnimations.rule(Predicate.MovingLeft)
+                )
+            }
+        }
+        if (player1 == "greeg") {
+            if (characterAnimations.matchesRule(playr1, characterAnimations.rule(Predicate.NotMoving))) {
+                if (P1Flip == 1) {
+                    characterAnimations.setCharacterAnimationsEnabled(playr1, false)
+                    characterAnimations.setCharacterAnimationsEnabled(playr1, true)
+                    characterAnimations.loopFrames(
+                    playr1,
+                    assets.animation`myAnim7`,
+                    100,
+                    characterAnimations.rule(Predicate.NotMoving)
+                    )
+                }
+                if (P1Flip == 0) {
+                    characterAnimations.setCharacterAnimationsEnabled(playr1, false)
+                    characterAnimations.setCharacterAnimationsEnabled(playr1, true)
+                    characterAnimations.loopFrames(
+                    playr1,
+                    assets.animation`myAnim9`,
+                    100,
+                    characterAnimations.rule(Predicate.NotMoving)
+                    )
+                }
+            }
+            if (characterAnimations.matchesRule(playr1, characterAnimations.rule(Predicate.MovingRight))) {
+                characterAnimations.loopFrames(
+                playr1,
+                assets.animation`myAnim8`,
+                50,
+                characterAnimations.rule(Predicate.MovingRight)
+                )
+            }
+            if (characterAnimations.matchesRule(playr1, characterAnimations.rule(Predicate.MovingLeft))) {
+                characterAnimations.loopFrames(
+                playr1,
+                assets.animation`myAnim10`,
+                50,
+                characterAnimations.rule(Predicate.MovingLeft)
+                )
+            }
+        }
+    }
+    if (player2 == "jeff") {
+        if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.NotMoving))) {
+            if (P2Flip == 1) {
+                characterAnimations.setCharacterAnimationsEnabled(playr2, false)
+                characterAnimations.setCharacterAnimationsEnabled(playr2, true)
+                characterAnimations.loopFrames(
+                playr2,
+                assets.animation`myAnim`,
+                100,
+                characterAnimations.rule(Predicate.NotMoving)
+                )
+            }
+            if (P2Flip == 0) {
+                characterAnimations.setCharacterAnimationsEnabled(playr2, false)
+                characterAnimations.setCharacterAnimationsEnabled(playr2, true)
+                characterAnimations.loopFrames(
+                playr2,
+                assets.animation`myAnim3`,
+                100,
+                characterAnimations.rule(Predicate.NotMoving)
+                )
+            }
+        }
+        if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.MovingRight))) {
+            characterAnimations.loopFrames(
+            playr2,
+            assets.animation`myAnim0`,
+            50,
+            characterAnimations.rule(Predicate.MovingRight)
+            )
+        }
+        if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.MovingLeft))) {
+            characterAnimations.loopFrames(
+            playr2,
+            assets.animation`myAnim4`,
+            50,
+            characterAnimations.rule(Predicate.MovingLeft)
+            )
+        }
+    }
+    if (player2 == "archie") {
+        if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.NotMoving))) {
+            if (P2Flip == 1) {
+                characterAnimations.setCharacterAnimationsEnabled(playr2, false)
+                characterAnimations.setCharacterAnimationsEnabled(playr2, true)
+                characterAnimations.loopFrames(
+                playr2,
+                assets.animation`myAnim1`,
+                100,
+                characterAnimations.rule(Predicate.NotMoving)
+                )
+            }
+            if (P2Flip == 0) {
+                characterAnimations.setCharacterAnimationsEnabled(playr2, false)
+                characterAnimations.setCharacterAnimationsEnabled(playr2, true)
+                characterAnimations.loopFrames(
+                playr2,
+                assets.animation`myAnim5`,
+                100,
+                characterAnimations.rule(Predicate.NotMoving)
+                )
+            }
+        }
+        if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.MovingRight))) {
+            characterAnimations.loopFrames(
+            playr2,
+            assets.animation`myAnim2`,
+            50,
+            characterAnimations.rule(Predicate.MovingRight)
+            )
+        }
+        if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.MovingLeft))) {
+            characterAnimations.loopFrames(
+            playr2,
+            assets.animation`myAnim6`,
+            50,
+            characterAnimations.rule(Predicate.MovingLeft)
+            )
+        }
+    }
+    if (player2 == "greeg") {
+        if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.NotMoving))) {
+            if (P2Flip == 1) {
+                characterAnimations.setCharacterAnimationsEnabled(playr2, false)
+                characterAnimations.setCharacterAnimationsEnabled(playr2, true)
+                characterAnimations.loopFrames(
+                playr2,
+                assets.animation`myAnim7`,
+                100,
+                characterAnimations.rule(Predicate.NotMoving)
+                )
+            }
+            if (P2Flip == 0) {
+                characterAnimations.setCharacterAnimationsEnabled(playr2, false)
+                characterAnimations.setCharacterAnimationsEnabled(playr2, true)
+                characterAnimations.loopFrames(
+                playr2,
+                assets.animation`myAnim9`,
+                100,
+                characterAnimations.rule(Predicate.NotMoving)
+                )
+            }
+        }
+        if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.MovingRight))) {
+            characterAnimations.loopFrames(
+            playr2,
+            assets.animation`myAnim8`,
+            50,
+            characterAnimations.rule(Predicate.MovingRight)
+            )
+        }
+        if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.MovingLeft))) {
+            characterAnimations.loopFrames(
+            playr2,
+            assets.animation`myAnim10`,
+            50,
+            characterAnimations.rule(Predicate.MovingLeft)
+            )
+        }
     }
 })
 game.onUpdateInterval(500, function () {
