@@ -364,6 +364,21 @@
         "mimeType": "image/x-mkcd-f4",
         "displayName": "myImage70"
     },
+    "image74": {
+        "data": "hwQEAAEAAAAEAAAACAAAAAgAAAAIAAAA",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "myImage71"
+    },
+    "image75": {
+        "data": "hwQEAAEAAAAIAAAACAAAAAgAAAAEAAAA",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "myImage72"
+    },
+    "image76": {
+        "data": "hwQEAAEAAAAEAAAAAgAAAAIAAAACAAAA",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "myImage73"
+    },
     "anim4": {
         "namespace": "myAnimations",
         "id": "anim4",

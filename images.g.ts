@@ -5449,6 +5449,18 @@ ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 `;
+            case "image74":
+            case "myImage71":return img`
+4 8 8 8 
+`;
+            case "image75":
+            case "myImage72":return img`
+8 8 8 4 
+`;
+            case "image76":
+            case "myImage73":return img`
+4 2 2 2 
+`;
         }
         return null;
     })
