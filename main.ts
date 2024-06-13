@@ -665,6 +665,9 @@ function selected () {
     slectedmusictimer = 0
     music.play(music.melodyPlayable(music.beamUp), music.PlaybackMode.InBackground)
 }
+function DamageKnockback (Player: string) {
+	
+}
 function P2jeffJab () {
     if (P2jabCoolDown == 0) {
         characterAnimations.setCharacterAnimationsEnabled(playr2, false)
@@ -1140,6 +1143,10 @@ controller.player2.onButtonEvent(ControllerButton.Right, ControllerButtonEvent.R
         P2Flip = 1
     }
 })
+let P2_indicator: Sprite = null
+let P2_indicator_counter = 0
+let P1_indicator: Sprite = null
+let P1_indicator_counter = 0
 let loadingz = 0
 let centreOnP2 = 0
 let cooounterP2 = 0
@@ -1439,6 +1446,14 @@ countdown2.bg = 0
     }
     if (CombatActive == 1) {
         if (player1 == "jeff") {
+            if (P1_indicator_counter == 0) {
+                P1_indicator = sprites.create(assets.image`myImage27`, SpriteKind.Button)
+                P1_indicator_counter = 1
+                P1_indicator.setScale(0.5, ScaleAnchor.Middle)
+            }
+            if (P1_indicator_counter == 1) {
+                P1_indicator.setPosition(playr2.x, playr2.y - 24)
+            }
             if (characterAnimations.matchesRule(playr1, characterAnimations.rule(Predicate.NotMoving))) {
                 if (P1Flip == 1) {
                     characterAnimations.setCharacterAnimationsEnabled(playr1, false)
@@ -1479,6 +1494,14 @@ countdown2.bg = 0
             }
         }
         if (player1 == "archie") {
+            if (P1_indicator_counter == 0) {
+                P1_indicator = sprites.create(assets.image`myImage27`, SpriteKind.Button)
+                P1_indicator_counter = 1
+                P1_indicator.setScale(0.5, ScaleAnchor.Middle)
+            }
+            if (P1_indicator_counter == 1) {
+                P1_indicator.setPosition(playr2.x, playr2.y - 24)
+            }
             if (characterAnimations.matchesRule(playr1, characterAnimations.rule(Predicate.NotMoving))) {
                 if (P1Flip == 1) {
                     characterAnimations.setCharacterAnimationsEnabled(playr1, false)
@@ -1519,6 +1542,14 @@ countdown2.bg = 0
             }
         }
         if (player1 == "greeg") {
+            if (P1_indicator_counter == 0) {
+                P1_indicator = sprites.create(assets.image`myImage27`, SpriteKind.Button)
+                P1_indicator_counter = 1
+                P1_indicator.setScale(0.5, ScaleAnchor.Middle)
+            }
+            if (P1_indicator_counter == 1) {
+                P1_indicator.setPosition(playr2.x, playr2.y - 24)
+            }
             if (P1_Greeg_Stunned == 1 && P1_StunnedFunctionCounter == 0) {
                 Stunnedfunction("Player1")
             }
@@ -1571,6 +1602,14 @@ countdown2.bg = 0
         }
     }
     if (player2 == "jeff") {
+        if (P2_indicator_counter == 0) {
+            P2_indicator = sprites.create(assets.image`myImage28`, SpriteKind.Button)
+            P2_indicator_counter = 1
+            P2_indicator.setScale(0.5, ScaleAnchor.Middle)
+        }
+        if (P2_indicator_counter == 1) {
+            P2_indicator.setPosition(playr2.x, playr2.y - 24)
+        }
         if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.NotMoving))) {
             if (P2Flip == 1) {
                 characterAnimations.setCharacterAnimationsEnabled(playr2, false)
@@ -1611,6 +1650,14 @@ countdown2.bg = 0
         }
     }
     if (player2 == "archie") {
+        if (P2_indicator_counter == 0) {
+            P2_indicator = sprites.create(assets.image`myImage28`, SpriteKind.Button)
+            P2_indicator_counter = 1
+            P2_indicator.setScale(0.5, ScaleAnchor.Middle)
+        }
+        if (P2_indicator_counter == 1) {
+            P2_indicator.setPosition(playr2.x, playr2.y - 24)
+        }
         if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.NotMoving))) {
             if (P2Flip == 1) {
                 characterAnimations.setCharacterAnimationsEnabled(playr2, false)
@@ -1651,6 +1698,14 @@ countdown2.bg = 0
         }
     }
     if (player2 == "greeg") {
+        if (P2_indicator_counter == 0) {
+            P2_indicator = sprites.create(assets.image`myImage28`, SpriteKind.Button)
+            P2_indicator_counter = 1
+            P2_indicator.setScale(0.5, ScaleAnchor.Middle)
+        }
+        if (P2_indicator_counter == 1) {
+            P2_indicator.setPosition(playr2.x, playr2.y - 24)
+        }
         if (P2_Greeg_Stunned == 1 && P2_StunnedFunctionCounter == 0) {
             Stunnedfunction("Player2")
         }
