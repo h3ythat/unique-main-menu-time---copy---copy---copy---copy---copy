@@ -59,11 +59,6 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
         }
     }
 })
-function GreegStunned (Player: string) {
-    if (true) {
-    	
-    }
-}
 function redrawcursor (cursor1_char: string, cursor2_char: string) {
     cursour1x = Cursor1.x
     cursor1y = Cursor1.y
@@ -299,6 +294,26 @@ function ReadierSOund (readyteam: Sprite) {
     sprites.setDataBoolean(readyteam, "musiced", true)
     music.play(music.melodyPlayable(music.knock), music.PlaybackMode.InBackground)
 }
+function Stunnedfunction (Player: string) {
+    if (Player == "Player1") {
+        P1_StunnedFunctionCounter = 1
+        characterAnimations.setCharacterState(playr1, characterAnimations.rule(Predicate.HittingWallRight, Predicate.HittingWallLeft))
+        characterAnimations.loopFrames(
+        playr1,
+        assets.animation`myAnim24`,
+        100,
+        characterAnimations.rule(Predicate.HittingWallRight, Predicate.HittingWallLeft)
+        )
+        controller.moveSprite(playr1, 0, 0)
+        P1_Greeg_Stunned = 1
+        timer.after(2500, function () {
+            P1_StunnedFunctionCounter = 0
+            controller.moveSprite(playr1, 100, 0)
+            P1_Greeg_Stunned = 0
+            characterAnimations.clearCharacterState(playr1)
+        })
+    }
+}
 function P1greegSpec () {
     if (P1SpecCoolDown == 0) {
         characterAnimations.setCharacterAnimationsEnabled(playr1, false)
@@ -338,6 +353,9 @@ function P1greegSpec () {
                     P1_Greeg_Stunned = 0
                 })
             }
+        })
+        timer.after(5000, function () {
+            P1SpecCoolDown = 0
         })
     }
 }
@@ -970,8 +988,9 @@ let Archie_bullet_P1: Sprite = null
 let P2jabCoolDown = 0
 let P1SpeedUpBar = 0
 let playr2: Sprite = null
-let P1_Greeg_Stunned = 0
 let P1_greeg_rolling = 0
+let P1_Greeg_Stunned = 0
+let P1_StunnedFunctionCounter = 0
 let P2Flip = 0
 let textsprite3: TextSprite = null
 let text3: TextSprite = null
@@ -1322,6 +1341,17 @@ countdown2.bg = 0
             }
         }
         if (player1 == "greeg") {
+            if (P1_Greeg_Stunned == 1 && P1_StunnedFunctionCounter == 0) {
+                Stunnedfunction("Player1")
+            }
+            if (playr2.overlapsWith(playr1)) {
+                if (P1_greeg_rolling == 1) {
+                    playr1.setVelocity(0, 0)
+                    P1_greeg_rolling = 0
+                    characterAnimations.clearCharacterState(playr1)
+                    P1_Greeg_Stunned = 1
+                }
+            }
             if (characterAnimations.matchesRule(playr1, characterAnimations.rule(Predicate.NotMoving))) {
                 if (P1Flip == 1) {
                     characterAnimations.setCharacterAnimationsEnabled(playr1, false)
