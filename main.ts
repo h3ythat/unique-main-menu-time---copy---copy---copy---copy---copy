@@ -188,7 +188,7 @@ function P2archieSpec () {
             )
         }
         P2SpecCoolDown = 1
-        controller.moveSprite(playr2, 0, 0)
+        controller.player2.moveSprite(playr2, 0, 0)
         timer.after(3000, function () {
             P2SpecCoolDown = 0
         })
@@ -206,24 +206,24 @@ function P2archieSpec () {
                 Archie_bullet_P2.lifespan = 100000
             }
             characterAnimations.clearCharacterState(playr2)
-            controller.moveSprite(playr2, 100, 0)
+            controller.player2.moveSprite(playr2, 100, 0)
         })
     }
 }
 controller.up.onEvent(ControllerButtonEvent.Repeated, function () {
     if (player1 == "jeff") {
         if (playr1.isHittingTile(CollisionDirection.Bottom)) {
-            playr1.vy += -70
+            playr1.vy += -160
         }
     }
     if (player1 == "greeg") {
         if (playr1.isHittingTile(CollisionDirection.Bottom)) {
-            playr1.vy += -90
+            playr1.vy += -160
         }
     }
     if (player1 == "archie") {
         if (playr1.isHittingTile(CollisionDirection.Bottom)) {
-            playr1.vy += -60
+            playr1.vy += -160
         }
     }
 })
@@ -260,11 +260,15 @@ function P1archieJab () {
             )
         }
         P1jabCoolDown = 1
+        timer.after(200, function () {
+            P1_Jabbing = 1
+        })
         timer.after(500, function () {
             P1jabCoolDown = 0
         })
         timer.after(455, function () {
             characterAnimations.clearCharacterState(playr1)
+            P1_Jabbing = 0
         })
     }
 }
@@ -634,17 +638,17 @@ controller.A.onEvent(ControllerButtonEvent.Released, function () {
 controller.player2.onButtonEvent(ControllerButton.Up, ControllerButtonEvent.Repeated, function () {
     if (player2 == "jeff") {
         if (playr2.isHittingTile(CollisionDirection.Bottom)) {
-            playr2.vy += -70
+            playr2.vy += -160
         }
     }
     if (player2 == "greeg") {
         if (playr2.isHittingTile(CollisionDirection.Bottom)) {
-            playr2.vy += -90
+            playr2.vy += -160
         }
     }
     if (player2 == "archie") {
         if (playr2.isHittingTile(CollisionDirection.Bottom)) {
-            playr2.vy += -60
+            playr2.vy += -160
         }
     }
 })
@@ -671,11 +675,15 @@ function P1greegJab () {
                 )
             }
             P1jabCoolDown = 1
+            timer.after(200, function () {
+                P1_Jabbing = 1
+            })
             timer.after(500, function () {
                 P1jabCoolDown = 0
             })
             timer.after(455, function () {
                 characterAnimations.clearCharacterState(playr1)
+                P1_Jabbing = 0
             })
         }
     }
@@ -753,11 +761,15 @@ function P2greegJab () {
                 )
             }
             P2jabCoolDown = 1
+            timer.after(200, function () {
+                P2_Jabbing = 1
+            })
             timer.after(500, function () {
                 P2jabCoolDown = 0
             })
             timer.after(455, function () {
                 characterAnimations.clearCharacterState(playr2)
+                P2_Jabbing = 0
             })
         }
     }
@@ -1164,11 +1176,15 @@ function P2archieJab () {
             )
         }
         P2jabCoolDown = 1
+        timer.after(200, function () {
+            P2_Jabbing = 1
+        })
         timer.after(500, function () {
             P2jabCoolDown = 0
         })
         timer.after(455, function () {
             characterAnimations.clearCharacterState(playr2)
+            P2_Jabbing = 0
         })
     }
 }
@@ -1177,6 +1193,7 @@ controller.player2.onButtonEvent(ControllerButton.Right, ControllerButtonEvent.R
         P2Flip = 1
     }
 })
+let P1_Jabbed_Cooldown = 0
 let P2_Jabbed_Cooldown = 0
 let P2_indicator: Sprite = null
 let P2_indicator_counter = 0
@@ -1203,7 +1220,6 @@ let Archie_bullet_P1: Sprite = null
 let P2_Jabbing = 0
 let P2jabCoolDown = 0
 let P1SpeedUpBar = 0
-let P1_Jabbing = 0
 let P1_greeg_rolling = 0
 let P2_StunnedFunctionCounter = 0
 let P1_Greeg_Stunned = 0
@@ -1222,6 +1238,7 @@ let archiecharacter: Sprite = null
 let greegcharacter: Sprite = null
 let slectedmusictimer = 0
 let jeffcharacter: Sprite = null
+let P1_Jabbing = 0
 let P1jabCoolDown = 0
 let Archie_bullet_P2: Sprite = null
 let P2_Greeg_Stunned = 0
@@ -1596,6 +1613,11 @@ countdown2.bg = 0
                     P1_greeg_rolling = 0
                     characterAnimations.clearCharacterState(playr1)
                     P1_Greeg_Stunned = 1
+                    if (P1Flip == 0) {
+                        DamageKnockback("Player2", -100, -1, 40)
+                    } else {
+                        DamageKnockback("Player2", 100, -1, 40)
+                    }
                 }
             }
             if (characterAnimations.matchesRule(playr1, characterAnimations.rule(Predicate.NotMoving))) {
@@ -1637,160 +1659,165 @@ countdown2.bg = 0
                 )
             }
         }
-    }
-    if (player2 == "jeff") {
-        if (P2_indicator_counter == 0) {
-            P2_indicator = sprites.create(assets.image`myImage28`, SpriteKind.Button)
-            P2_indicator_counter = 1
-            P2_indicator.setScale(0.5, ScaleAnchor.Middle)
-        }
-        if (P2_indicator_counter == 1) {
-            P2_indicator.setPosition(playr2.x, playr2.y - 24)
-        }
-        if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.NotMoving))) {
-            if (P2Flip == 1) {
-                characterAnimations.setCharacterAnimationsEnabled(playr2, false)
-                characterAnimations.setCharacterAnimationsEnabled(playr2, true)
+        if (player2 == "jeff") {
+            if (P2_indicator_counter == 0) {
+                P2_indicator = sprites.create(assets.image`myImage28`, SpriteKind.Button)
+                P2_indicator_counter = 1
+                P2_indicator.setScale(0.5, ScaleAnchor.Middle)
+            }
+            if (P2_indicator_counter == 1) {
+                P2_indicator.setPosition(playr2.x, playr2.y - 24)
+            }
+            if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.NotMoving))) {
+                if (P2Flip == 1) {
+                    characterAnimations.setCharacterAnimationsEnabled(playr2, false)
+                    characterAnimations.setCharacterAnimationsEnabled(playr2, true)
+                    characterAnimations.loopFrames(
+                    playr2,
+                    assets.animation`myAnim`,
+                    100,
+                    characterAnimations.rule(Predicate.NotMoving)
+                    )
+                }
+                if (P2Flip == 0) {
+                    characterAnimations.setCharacterAnimationsEnabled(playr2, false)
+                    characterAnimations.setCharacterAnimationsEnabled(playr2, true)
+                    characterAnimations.loopFrames(
+                    playr2,
+                    assets.animation`myAnim3`,
+                    100,
+                    characterAnimations.rule(Predicate.NotMoving)
+                    )
+                }
+            }
+            if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.MovingRight))) {
                 characterAnimations.loopFrames(
                 playr2,
-                assets.animation`myAnim`,
-                100,
-                characterAnimations.rule(Predicate.NotMoving)
+                assets.animation`myAnim0`,
+                50,
+                characterAnimations.rule(Predicate.MovingRight)
                 )
             }
-            if (P2Flip == 0) {
-                characterAnimations.setCharacterAnimationsEnabled(playr2, false)
-                characterAnimations.setCharacterAnimationsEnabled(playr2, true)
+            if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.MovingLeft))) {
                 characterAnimations.loopFrames(
                 playr2,
-                assets.animation`myAnim3`,
-                100,
-                characterAnimations.rule(Predicate.NotMoving)
-                )
-            }
-        }
-        if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.MovingRight))) {
-            characterAnimations.loopFrames(
-            playr2,
-            assets.animation`myAnim0`,
-            50,
-            characterAnimations.rule(Predicate.MovingRight)
-            )
-        }
-        if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.MovingLeft))) {
-            characterAnimations.loopFrames(
-            playr2,
-            assets.animation`myAnim4`,
-            50,
-            characterAnimations.rule(Predicate.MovingLeft)
-            )
-        }
-    }
-    if (player2 == "archie") {
-        if (P2_indicator_counter == 0) {
-            P2_indicator = sprites.create(assets.image`myImage28`, SpriteKind.Button)
-            P2_indicator_counter = 1
-            P2_indicator.setScale(0.5, ScaleAnchor.Middle)
-        }
-        if (P2_indicator_counter == 1) {
-            P2_indicator.setPosition(playr2.x, playr2.y - 24)
-        }
-        if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.NotMoving))) {
-            if (P2Flip == 1) {
-                characterAnimations.setCharacterAnimationsEnabled(playr2, false)
-                characterAnimations.setCharacterAnimationsEnabled(playr2, true)
-                characterAnimations.loopFrames(
-                playr2,
-                assets.animation`myAnim1`,
-                100,
-                characterAnimations.rule(Predicate.NotMoving)
-                )
-            }
-            if (P2Flip == 0) {
-                characterAnimations.setCharacterAnimationsEnabled(playr2, false)
-                characterAnimations.setCharacterAnimationsEnabled(playr2, true)
-                characterAnimations.loopFrames(
-                playr2,
-                assets.animation`myAnim5`,
-                100,
-                characterAnimations.rule(Predicate.NotMoving)
+                assets.animation`myAnim4`,
+                50,
+                characterAnimations.rule(Predicate.MovingLeft)
                 )
             }
         }
-        if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.MovingRight))) {
-            characterAnimations.loopFrames(
-            playr2,
-            assets.animation`myAnim2`,
-            50,
-            characterAnimations.rule(Predicate.MovingRight)
-            )
-        }
-        if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.MovingLeft))) {
-            characterAnimations.loopFrames(
-            playr2,
-            assets.animation`myAnim6`,
-            50,
-            characterAnimations.rule(Predicate.MovingLeft)
-            )
-        }
-    }
-    if (player2 == "greeg") {
-        if (P2_indicator_counter == 0) {
-            P2_indicator = sprites.create(assets.image`myImage28`, SpriteKind.Button)
-            P2_indicator_counter = 1
-            P2_indicator.setScale(0.5, ScaleAnchor.Middle)
-        }
-        if (P2_indicator_counter == 1) {
-            P2_indicator.setPosition(playr2.x, playr2.y - 24)
-        }
-        if (P2_Greeg_Stunned == 1 && P2_StunnedFunctionCounter == 0) {
-            Stunnedfunction("Player2")
-        }
-        if (playr2.overlapsWith(playr1)) {
-            if (P2_greeg_rolling == 1) {
-                playr2.setVelocity(0, 0)
-                P2_greeg_rolling = 0
-                characterAnimations.clearCharacterState(playr2)
-                P2_Greeg_Stunned = 1
+        if (player2 == "archie") {
+            if (P2_indicator_counter == 0) {
+                P2_indicator = sprites.create(assets.image`myImage28`, SpriteKind.Button)
+                P2_indicator_counter = 1
+                P2_indicator.setScale(0.5, ScaleAnchor.Middle)
             }
-        }
-        if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.NotMoving))) {
-            if (P2Flip == 1) {
-                characterAnimations.setCharacterAnimationsEnabled(playr2, false)
-                characterAnimations.setCharacterAnimationsEnabled(playr2, true)
+            if (P2_indicator_counter == 1) {
+                P2_indicator.setPosition(playr2.x, playr2.y - 24)
+            }
+            if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.NotMoving))) {
+                if (P2Flip == 1) {
+                    characterAnimations.setCharacterAnimationsEnabled(playr2, false)
+                    characterAnimations.setCharacterAnimationsEnabled(playr2, true)
+                    characterAnimations.loopFrames(
+                    playr2,
+                    assets.animation`myAnim1`,
+                    100,
+                    characterAnimations.rule(Predicate.NotMoving)
+                    )
+                }
+                if (P2Flip == 0) {
+                    characterAnimations.setCharacterAnimationsEnabled(playr2, false)
+                    characterAnimations.setCharacterAnimationsEnabled(playr2, true)
+                    characterAnimations.loopFrames(
+                    playr2,
+                    assets.animation`myAnim5`,
+                    100,
+                    characterAnimations.rule(Predicate.NotMoving)
+                    )
+                }
+            }
+            if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.MovingRight))) {
                 characterAnimations.loopFrames(
                 playr2,
-                assets.animation`myAnim7`,
-                100,
-                characterAnimations.rule(Predicate.NotMoving)
+                assets.animation`myAnim2`,
+                50,
+                characterAnimations.rule(Predicate.MovingRight)
                 )
             }
-            if (P2Flip == 0) {
-                characterAnimations.setCharacterAnimationsEnabled(playr2, false)
-                characterAnimations.setCharacterAnimationsEnabled(playr2, true)
+            if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.MovingLeft))) {
                 characterAnimations.loopFrames(
                 playr2,
-                assets.animation`myAnim9`,
-                100,
-                characterAnimations.rule(Predicate.NotMoving)
+                assets.animation`myAnim6`,
+                50,
+                characterAnimations.rule(Predicate.MovingLeft)
                 )
             }
         }
-        if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.MovingRight))) {
-            characterAnimations.loopFrames(
-            playr2,
-            assets.animation`myAnim8`,
-            50,
-            characterAnimations.rule(Predicate.MovingRight)
-            )
-        }
-        if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.MovingLeft))) {
-            characterAnimations.loopFrames(
-            playr2,
-            assets.animation`myAnim10`,
-            50,
-            characterAnimations.rule(Predicate.MovingLeft)
-            )
+        if (player2 == "greeg") {
+            if (P2_indicator_counter == 0) {
+                P2_indicator = sprites.create(assets.image`myImage28`, SpriteKind.Button)
+                P2_indicator_counter = 1
+                P2_indicator.setScale(0.5, ScaleAnchor.Middle)
+            }
+            if (P2_indicator_counter == 1) {
+                P2_indicator.setPosition(playr2.x, playr2.y - 24)
+            }
+            if (P2_Greeg_Stunned == 1 && P2_StunnedFunctionCounter == 0) {
+                Stunnedfunction("Player2")
+            }
+            if (playr2.overlapsWith(playr1)) {
+                if (P2_greeg_rolling == 1) {
+                    playr2.setVelocity(0, 0)
+                    P2_greeg_rolling = 0
+                    characterAnimations.clearCharacterState(playr2)
+                    P2_Greeg_Stunned = 1
+                    if (P2Flip == 0) {
+                        DamageKnockback("Player1", -100, -1, 40)
+                    } else {
+                        DamageKnockback("Player1", 100, -1, 40)
+                    }
+                }
+            }
+            if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.NotMoving))) {
+                if (P2Flip == 1) {
+                    characterAnimations.setCharacterAnimationsEnabled(playr2, false)
+                    characterAnimations.setCharacterAnimationsEnabled(playr2, true)
+                    characterAnimations.loopFrames(
+                    playr2,
+                    assets.animation`myAnim7`,
+                    100,
+                    characterAnimations.rule(Predicate.NotMoving)
+                    )
+                }
+                if (P2Flip == 0) {
+                    characterAnimations.setCharacterAnimationsEnabled(playr2, false)
+                    characterAnimations.setCharacterAnimationsEnabled(playr2, true)
+                    characterAnimations.loopFrames(
+                    playr2,
+                    assets.animation`myAnim9`,
+                    100,
+                    characterAnimations.rule(Predicate.NotMoving)
+                    )
+                }
+            }
+            if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.MovingRight))) {
+                characterAnimations.loopFrames(
+                playr2,
+                assets.animation`myAnim8`,
+                50,
+                characterAnimations.rule(Predicate.MovingRight)
+                )
+            }
+            if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.MovingLeft))) {
+                characterAnimations.loopFrames(
+                playr2,
+                assets.animation`myAnim10`,
+                50,
+                characterAnimations.rule(Predicate.MovingLeft)
+                )
+            }
         }
         if (P1_Jabbing == 1 && P2_Jabbed_Cooldown == 0 && playr1.overlapsWith(playr2)) {
             P2_Jabbed_Cooldown = 1
@@ -1799,29 +1826,62 @@ countdown2.bg = 0
                     P2_Jabbed_Cooldown = 0
                 })
                 if (P1Flip == 0) {
-                    DamageKnockback("Player2", -30, -20, 15)
+                    DamageKnockback("Player2", -50, -40, 15)
                 } else {
-                    DamageKnockback("Player2", 30, -20, 15)
+                    DamageKnockback("Player2", 50, -40, 15)
                 }
             }
             if (player1 == "archie") {
+                timer.after(300, function () {
+                    P2_Jabbed_Cooldown = 0
+                })
                 if (P1Flip == 0) {
-                    timer.after(300, function () {
-                        P2_Jabbed_Cooldown = 0
-                    })
                     DamageKnockback("Player2", -10, -10, 7.5)
                 } else {
-                    DamageKnockback("Player2", -10, -10, 7.5)
+                    DamageKnockback("Player2", 10, -10, 7.5)
                 }
             }
             if (player1 == "greeg") {
+                timer.after(300, function () {
+                    P2_Jabbed_Cooldown = 0
+                })
                 if (P1Flip == 0) {
-                    timer.after(300, function () {
-                        P2_Jabbed_Cooldown = 0
-                    })
-                    DamageKnockback("Player2", -40, 30, 35)
+                    DamageKnockback("Player2", -40, -30, 35)
                 } else {
-                    DamageKnockback("Player2", 40, 30, 35)
+                    DamageKnockback("Player2", 40, -30, 35)
+                }
+            }
+        }
+        if (P2_Jabbing == 1 && P1_Jabbed_Cooldown == 0 && playr1.overlapsWith(playr2)) {
+            P1_Jabbed_Cooldown = 1
+            if (player2 == "jeff") {
+                timer.after(300, function () {
+                    P1_Jabbed_Cooldown = 0
+                })
+                if (P1Flip == 0) {
+                    DamageKnockback("Player1", -50, -40, 15)
+                } else {
+                    DamageKnockback("Player1", 50, -40, 15)
+                }
+            }
+            if (player2 == "archie") {
+                timer.after(300, function () {
+                    P1_Jabbed_Cooldown = 0
+                })
+                if (P1Flip == 0) {
+                    DamageKnockback("Player1", -10, -10, 7.5)
+                } else {
+                    DamageKnockback("Player1", 10, -10, 7.5)
+                }
+            }
+            if (player2 == "greeg") {
+                timer.after(300, function () {
+                    P1_Jabbed_Cooldown = 0
+                })
+                if (P2Flip == 0) {
+                    DamageKnockback("Player1", -40, -30, 35)
+                } else {
+                    DamageKnockback("Player1", 40, -30, 35)
                 }
             }
         }
