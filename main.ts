@@ -88,10 +88,10 @@ controller.player2.onButtonEvent(ControllerButton.B, ControllerButtonEvent.Press
             P2jeffSpec()
         }
         if (player2 == "archie") {
-        	
+            P2archieSpec()
         }
         if (player2 == "greeg") {
-        	
+            P2greegSpec()
         }
     }
 })
@@ -121,7 +121,52 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
         }
     }
 })
-function P1archieSpec2 () {
+function P2greegSpec () {
+    if (P2SpecCoolDown == 0) {
+        characterAnimations.setCharacterAnimationsEnabled(playr2, false)
+        characterAnimations.setCharacterAnimationsEnabled(playr2, true)
+        characterAnimations.setCharacterState(playr2, characterAnimations.rule(Predicate.HittingWallUp))
+        if (P2Flip == 0) {
+            characterAnimations.loopFrames(
+            playr2,
+            assets.animation`myAnim23`,
+            50,
+            characterAnimations.rule(Predicate.HittingWallUp)
+            )
+            playr2.setVelocity(-150, 0)
+        }
+        if (P2Flip == 1) {
+            characterAnimations.loopFrames(
+            playr2,
+            assets.animation`myAnim22`,
+            50,
+            characterAnimations.rule(Predicate.HittingWallUp)
+            )
+            playr2.setVelocity(150, 0)
+        }
+        P2_greeg_rolling = 1
+        P2SpecCoolDown = 1
+        timer.after(1000, function () {
+            if (P2_greeg_rolling == 1) {
+                playr2.setVelocity(0, 0)
+                characterAnimations.clearCharacterState(playr2)
+                characterAnimations.setCharacterState(playr2, characterAnimations.rule(Predicate.HittingWallLeft, Predicate.HittingWallRight))
+                P2_greeg_rolling = 0
+                controller.moveSprite(playr2, 0, 0)
+                P2_Greeg_Stunned = 1
+                timer.after(2500, function () {
+                    characterAnimations.clearCharacterState(playr2)
+                    controller.moveSprite(playr2, 100, 0)
+                    P2_Greeg_Stunned = 0
+                })
+            }
+        })
+        timer.after(5000, function () {
+            P2SpecCoolDown = 0
+        })
+    }
+}
+function P2archieSpec () {
     if (P2SpecCoolDown == 0) {
         characterAnimations.setCharacterAnimationsEnabled(playr2, false)
         characterAnimations.setCharacterAnimationsEnabled(playr2, true)
@@ -150,16 +195,18 @@ function P1archieSpec2 () {
         timer.after(800, function () {
             if (P2Flip == 0) {
                 Archie_bullet_P2 = sprites.create(assets.image`myImage71`, SpriteKind.Bullet_P2)
+                Archie_bullet_P2.setPosition(playr2.x - 9.5, playr2.y - 1)
                 Archie_bullet_P2.setVelocity(-200, 0)
+                Archie_bullet_P2.lifespan = 100000
             }
             if (P1Flip == 1) {
                 Archie_bullet_P2 = sprites.create(assets.image`myImage72`, SpriteKind.Bullet_P2)
+                Archie_bullet_P2.setPosition(playr2.x + 9.5, playr2.y - 1)
                 Archie_bullet_P2.setVelocity(200, 0)
+                Archie_bullet_P2.lifespan = 100000
             }
             characterAnimations.clearCharacterState(playr2)
             controller.moveSprite(playr2, 100, 0)
-            Archie_bullet_P2.setPosition(playr1.x + 9.5, playr1.y - 1)
-            Archie_bullet_P2.setVelocity(200, 0)
         })
     }
 }
@@ -376,6 +423,24 @@ function Stunnedfunction (Player: string) {
             characterAnimations.clearCharacterState(playr1)
         })
     }
+    if (Player == "Player2") {
+        P2_StunnedFunctionCounter = 1
+        characterAnimations.setCharacterState(playr2, characterAnimations.rule(Predicate.HittingWallRight, Predicate.HittingWallLeft))
+        characterAnimations.loopFrames(
+        playr2,
+        assets.animation`myAnim24`,
+        100,
+        characterAnimations.rule(Predicate.HittingWallRight, Predicate.HittingWallLeft)
+        )
+        controller.player2.moveSprite(playr2, 0, 0)
+        P2_Greeg_Stunned = 1
+        timer.after(2500, function () {
+            P2_StunnedFunctionCounter = 0
+            controller.player2.moveSprite(playr2, 100, 0)
+            P2_Greeg_Stunned = 0
+            characterAnimations.clearCharacterState(playr2)
+        })
+    }
 }
 function P2jeffSpec () {
     if (P2SpecCoolDown == 0) {
@@ -506,6 +571,9 @@ function P1jeffJab () {
         })
     }
 }
+scene.onHitWall(SpriteKind.Bullet_P2, function (sprite, location) {
+    sprites.destroy(sprite)
+})
 // function P1jeffSpec() {
 // if ( == 0) {
 // characterAnimations.setCharacterAnimationsEnabled(playr1, false)
@@ -628,35 +696,40 @@ function P2jeffJab () {
     }
 }
 function P2greegJab () {
-    if (P2jabCoolDown == 0) {
-        characterAnimations.setCharacterAnimationsEnabled(playr2, false)
-        characterAnimations.setCharacterAnimationsEnabled(playr2, true)
-        characterAnimations.setCharacterState(playr2, characterAnimations.rule(Predicate.HittingWallUp))
-        if (P2Flip == 0) {
-            animation.runImageAnimation(
-            playr2,
-            assets.animation`myAnim17`,
-            75,
-            false
-            )
+    if (P2_greeg_rolling == 0 && P2_Greeg_Stunned == 0) {
+        if (P2jabCoolDown == 0) {
+            characterAnimations.setCharacterAnimationsEnabled(playr2, false)
+            characterAnimations.setCharacterAnimationsEnabled(playr2, true)
+            characterAnimations.setCharacterState(playr2, characterAnimations.rule(Predicate.FacingDown))
+            if (P2Flip == 0) {
+                animation.runImageAnimation(
+                playr2,
+                assets.animation`myAnim17`,
+                75,
+                false
+                )
+            }
+            if (P2Flip == 1) {
+                animation.runImageAnimation(
+                playr2,
+                assets.animation`myAnim16`,
+                75,
+                false
+                )
+            }
+            P2jabCoolDown = 1
+            timer.after(500, function () {
+                P2jabCoolDown = 0
+            })
+            timer.after(455, function () {
+                characterAnimations.clearCharacterState(playr2)
+            })
         }
-        if (P2Flip == 1) {
-            animation.runImageAnimation(
-            playr2,
-            assets.animation`myAnim16`,
-            75,
-            false
-            )
-        }
-        P2jabCoolDown = 1
-        timer.after(500, function () {
-            P2jabCoolDown = 0
-        })
-        timer.after(455, function () {
-            characterAnimations.clearCharacterState(playr2)
-        })
     }
 }
+scene.onHitWall(SpriteKind.Bullet_P1, function (sprite, location) {
+    sprites.destroy(sprite)
+})
 function P1archieSpec () {
     if (P1SpecCoolDown == 0) {
         characterAnimations.setCharacterAnimationsEnabled(playr1, false)
@@ -687,15 +760,17 @@ function P1archieSpec () {
             characterAnimations.clearCharacterState(playr1)
             if (P1Flip == 0) {
                 Archie_bullet_P1 = sprites.create(assets.image`myImage69`, SpriteKind.Bullet_P1)
+                Archie_bullet_P1.setPosition(playr1.x - 9.5, playr1.y - 1)
                 Archie_bullet_P1.setVelocity(-200, 0)
+                Archie_bullet_P1.lifespan = 100000
             }
             if (P1Flip == 1) {
                 Archie_bullet_P1 = sprites.create(assets.image`myImage69`, SpriteKind.Bullet_P1)
+                Archie_bullet_P1.setPosition(playr1.x + 9.5, playr1.y - 1)
                 Archie_bullet_P1.setVelocity(200, 0)
+                Archie_bullet_P1.lifespan = 100000
             }
             controller.moveSprite(playr1, 100, 0)
-            Archie_bullet_P1.setPosition(playr1.x + 9.5, playr1.y - 1)
-            Archie_bullet_P1.setVelocity(200, 0)
         })
     }
 }
@@ -1086,6 +1161,7 @@ let Archie_bullet_P1: Sprite = null
 let P2jabCoolDown = 0
 let P1SpeedUpBar = 0
 let P1_greeg_rolling = 0
+let P2_StunnedFunctionCounter = 0
 let P1_Greeg_Stunned = 0
 let P1_StunnedFunctionCounter = 0
 let textsprite3: TextSprite = null
@@ -1104,6 +1180,8 @@ let slectedmusictimer = 0
 let jeffcharacter: Sprite = null
 let P1jabCoolDown = 0
 let Archie_bullet_P2: Sprite = null
+let P2_Greeg_Stunned = 0
+let P2_greeg_rolling = 0
 let P2Flip = 0
 let playr2: Sprite = null
 let P2SpecCoolDown = 0
@@ -1573,6 +1651,17 @@ countdown2.bg = 0
         }
     }
     if (player2 == "greeg") {
+        if (P2_Greeg_Stunned == 1 && P2_StunnedFunctionCounter == 0) {
+            Stunnedfunction("Player2")
+        }
+        if (playr2.overlapsWith(playr1)) {
+            if (P2_greeg_rolling == 1) {
+                playr2.setVelocity(0, 0)
+                P2_greeg_rolling = 0
+                characterAnimations.clearCharacterState(playr2)
+                P2_Greeg_Stunned = 1
+            }
+        }
         if (characterAnimations.matchesRule(playr2, characterAnimations.rule(Predicate.NotMoving))) {
             if (P2Flip == 1) {
                 characterAnimations.setCharacterAnimationsEnabled(playr2, false)
