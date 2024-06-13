@@ -1885,6 +1885,12 @@ countdown2.bg = 0
                 }
             }
         }
+        if (playr1.y == 785) {
+            mp.gameOverPlayerWin(mp.playerSelector(mp.PlayerNumber.Two))
+        }
+        if (playr2.y == 785) {
+            mp.gameOverPlayerWin(mp.playerSelector(mp.PlayerNumber.One))
+        }
     }
 })
 game.onUpdateInterval(500, function () {
