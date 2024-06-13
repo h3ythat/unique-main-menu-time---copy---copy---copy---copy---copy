@@ -229,7 +229,13 @@ controller.up.onEvent(ControllerButtonEvent.Repeated, function () {
 })
 sprites.onOverlap(SpriteKind.Bullet_P2, SpriteKind.Player, function (sprite, otherSprite) {
     if (otherSprite == playr1) {
-    	
+        if (P2Flip == 0) {
+            sprites.destroy(sprite)
+            DamageKnockback("Player1", -50, -100, 30)
+        } else {
+            sprites.destroy(sprite)
+            DamageKnockback("Player1", -50, -100, 30)
+        }
     }
 })
 function P1archieJab () {
@@ -294,6 +300,9 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     }
 })
 controller.player2.onButtonEvent(ControllerButton.A, ControllerButtonEvent.Pressed, function () {
+    if (Cursor2.overlapsWith(mySprite)) {
+        Play()
+    }
     if (Cursor2.overlapsWith(jeffcharacter)) {
         sprites.setDataString(Cursor2, "characterchosen", "jeff")
         slectedmusictimer = 1
@@ -369,7 +378,13 @@ countdownthingy = textsprite.create("Time left:", 0, 15)
 }
 sprites.onOverlap(SpriteKind.Bullet_P1, SpriteKind.Player, function (sprite, otherSprite) {
     if (otherSprite == playr2) {
-    	
+        if (P1Flip == 0) {
+            sprites.destroy(sprite)
+            DamageKnockback("Player2", -50, -100, 30)
+        } else {
+            sprites.destroy(sprite)
+            DamageKnockback("Player2", -50, -100, 30)
+        }
     }
 })
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
@@ -563,11 +578,15 @@ function P1jeffJab () {
             )
         }
         P1jabCoolDown = 1
-        timer.after(500, function () {
+        timer.after(200, function () {
+            P1_Jabbing = 1
+        })
+        timer.after(600, function () {
             P1jabCoolDown = 0
         })
         timer.after(455, function () {
-            characterAnimations.clearCharacterState(playr2)
+            characterAnimations.clearCharacterState(playr1)
+            P1_Jabbing = 0
         })
     }
 }
@@ -669,6 +688,12 @@ function DamageKnockback (Player: string, VX: number, VY: number, Damage: number
     if (Player == "Player1") {
         playr1.vx += VX
         playr1.vy += VY
+        info.player1.setScore(info.player1.score() - Damage)
+    }
+    if (Player == "Player2") {
+        playr2.vx += VX
+        playr2.vy += VY
+        info.player2.setScore(info.player2.score() - Damage)
     }
 }
 function P2jeffJab () {
@@ -693,11 +718,15 @@ function P2jeffJab () {
             )
         }
         P2jabCoolDown = 1
-        timer.after(500, function () {
+        timer.after(200, function () {
+            P2_Jabbing = 1
+        })
+        timer.after(600, function () {
             P2jabCoolDown = 0
         })
         timer.after(455, function () {
             characterAnimations.clearCharacterState(playr2)
+            P2_Jabbing = 0
         })
     }
 }
@@ -1110,8 +1139,8 @@ function INITIATE_COMBAT (Player1Char: string, Player2Char: string) {
         controller.player2.moveSprite(playr2, 100, 0)
     }
     CombatActive = 1
-    P1Health = 100
-    P2Health = 100
+    info.setScore(100)
+    info.player2.setScore(100)
 }
 function P2archieJab () {
     if (P2jabCoolDown == 0) {
@@ -1148,13 +1177,12 @@ controller.player2.onButtonEvent(ControllerButton.Right, ControllerButtonEvent.R
         P2Flip = 1
     }
 })
+let P2_Jabbed_Cooldown = 0
 let P2_indicator: Sprite = null
 let P2_indicator_counter = 0
 let P1_indicator: Sprite = null
 let P1_indicator_counter = 0
 let loadingz = 0
-let P2Health = 0
-let P1Health = 0
 let centreOnP2 = 0
 let cooounterP2 = 0
 let centreOnP1 = 0
@@ -1172,8 +1200,10 @@ let jeff_img_flip: Image = null
 let P2_VERSION_VERSUS_SCREEN: Sprite = null
 let P1_VERSION_VERSUS_SCREEN: Sprite = null
 let Archie_bullet_P1: Sprite = null
+let P2_Jabbing = 0
 let P2jabCoolDown = 0
 let P1SpeedUpBar = 0
+let P1_Jabbing = 0
 let P1_greeg_rolling = 0
 let P2_StunnedFunctionCounter = 0
 let P1_Greeg_Stunned = 0
@@ -1761,6 +1791,39 @@ countdown2.bg = 0
             50,
             characterAnimations.rule(Predicate.MovingLeft)
             )
+        }
+        if (P1_Jabbing == 1 && P2_Jabbed_Cooldown == 0 && playr1.overlapsWith(playr2)) {
+            P2_Jabbed_Cooldown = 1
+            if (player1 == "jeff") {
+                timer.after(300, function () {
+                    P2_Jabbed_Cooldown = 0
+                })
+                if (P1Flip == 0) {
+                    DamageKnockback("Player2", -30, -20, 15)
+                } else {
+                    DamageKnockback("Player2", 30, -20, 15)
+                }
+            }
+            if (player1 == "archie") {
+                if (P1Flip == 0) {
+                    timer.after(300, function () {
+                        P2_Jabbed_Cooldown = 0
+                    })
+                    DamageKnockback("Player2", -10, -10, 7.5)
+                } else {
+                    DamageKnockback("Player2", -10, -10, 7.5)
+                }
+            }
+            if (player1 == "greeg") {
+                if (P1Flip == 0) {
+                    timer.after(300, function () {
+                        P2_Jabbed_Cooldown = 0
+                    })
+                    DamageKnockback("Player2", -40, 30, 35)
+                } else {
+                    DamageKnockback("Player2", 40, 30, 35)
+                }
+            }
         }
     }
 })
