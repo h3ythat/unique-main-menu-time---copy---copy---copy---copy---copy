@@ -234,7 +234,7 @@ sprites.onOverlap(SpriteKind.Bullet_P2, SpriteKind.Player, function (sprite, oth
             DamageKnockback("Player1", -50, -100, 30)
         } else {
             sprites.destroy(sprite)
-            DamageKnockback("Player1", -50, -100, 30)
+            DamageKnockback("Player1", 50, -100, 30)
         }
     }
 })
@@ -387,7 +387,7 @@ sprites.onOverlap(SpriteKind.Bullet_P1, SpriteKind.Player, function (sprite, oth
             DamageKnockback("Player2", -50, -100, 30)
         } else {
             sprites.destroy(sprite)
-            DamageKnockback("Player2", -50, -100, 30)
+            DamageKnockback("Player2", 50, -100, 30)
         }
     }
 })
